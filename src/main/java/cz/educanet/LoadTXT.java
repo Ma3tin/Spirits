@@ -7,10 +7,10 @@ import java.io.IOException;
 
 public class LoadTXT {
 
-    public static String haf() {
+    public static String loadTxt(String textFile) {
         String maze = "";
         try {
-            BufferedReader br = new BufferedReader(new FileReader("Maze.txt"));
+            BufferedReader br = new BufferedReader(new FileReader(textFile));
             String line = br.readLine();
             for (int i = 0; line != null; i++) {
                 maze += line + "\n";

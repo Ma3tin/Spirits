@@ -7,13 +7,16 @@ public class Shaders {
             "layout (location = 0) in vec3 aPos;\n" +
             "layout (location = 1) in vec4 vertexColors;\n" +
 
+            "uniform mat4 matrix;" +
+
             "out vec4 myColors;\n" +
 
             "void main()\n" +
             "{\n" +
-            "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n" +
+            "gl_Position = matrix *  vec4(aPos.x, aPos.y, aPos.z, 1.0);\n" +
             "myColors = vertexColors;\n" +
             "}";
+
 
     private static final String fragmentShaderSource = "#version 330 core\n" +
             "out vec4 FragColor;\n" +

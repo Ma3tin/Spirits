@@ -4,22 +4,14 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL33;
 
+import java.util.ArrayList;
+
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        String maze = LoadTXT.haf();
+        String maze = LoadTXT.loadTxt("Collision.txt");
 
         String[] linesOfMaze = maze.split("\n");
-        int lengthOfMaze = linesOfMaze.length;
-        float sizeofMaze = 2 / (float) lengthOfMaze;
-
-        char[][] zerosAndOnes = new char[lengthOfMaze][lengthOfMaze];
-        for (int i = 0; i < lengthOfMaze; i++) {
-            for (int j = 0; j < lengthOfMaze; j++) {
-                zerosAndOnes[i][j] = linesOfMaze[i].charAt(j);
-            }
-        }
-
 
 
         //region: Window init
@@ -52,34 +44,20 @@ public class Main {
         // Main game loop
         //Game.init(window);
         Shaders.initShaders();
-        Square squareOne = new Square(0, 0, lengthOfMaze);
 
         // Draw in polygon mod
         //GL33.glPolygonMode(GL33.GL_FRONT_AND_BACK, GL33.GL_LINE);
+        ArrayList<Square> squares = new ArrayList<>();
 
-        Square[][] squares = new Square[lengthOfMaze][lengthOfMaze];
-        for (int i = 0; i < zerosAndOnes.length; i++) {
-            for (int j = 0; j < lengthOfMaze; j++) {
-                    if (zerosAndOnes[i][j] == '1') {
-                        squares[i][j] = new Square((j * sizeofMaze - 1), 1 - (i * sizeofMaze), sizeofMaze);
-                    } else {
-                        squares[i][j] = null;
-                    }
-            }
+        for (int i = 0; i < linesOfMaze.length; i++) {
+            String[] coords = linesOfMaze[i].split(";");
+            Square square = new Square(Float.parseFloat(coords[0]), Float.parseFloat(coords[1]), Float.parseFloat(coords[2]));
+            squares.add(square);
         }
 
-        /*
+        Square movingSquare = new Square(0f, 0f, 0.25f);
 
-                for (int k = 0; i < lengthOfMaze; k++) {
-                    for (int j = 0; j < lengthOfMaze; j++) {
-                        if (zeroSAndOnes[i].equals("1")) {
-                            squares[k][j] = new Square((k * sizeofMaze) - 1, 1 - (j * sizeofMaze), sizeofMaze);
-                        } else {
-                            squares[k][j] = new Square(0f, 0f, 0f);
-                        }
-                    }
-                }
-         */
+
         while (!GLFW.glfwWindowShouldClose(window)) {
             // Key input management
             if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_ESCAPE) == GLFW.GLFW_PRESS)
@@ -93,12 +71,22 @@ public class Main {
             Game.update(window);*/
             //squareOne.render();
 
-            for (int i = 0; i < squares.length; i++) {
-                for (int j = 0; j < squares.length; j++) {
-                    if (squares[i][j] != null) squares[i][j].render();
-                }
+            for (int i = 0; i < squares.size(); i++) {
+                squares.get(i).render();
             }
 
+
+
+            for (int i = 0; i < squares.size(); i++) {
+
+                if (isIn(movingSquare, squares.get(i))){
+                    movingSquare.red();
+
+                } else movingSquare.white();
+            }
+            movingSquare.update(window);
+
+            movingSquare.render();
 
             // Swap the color buffer -> screen tearing solution
             GLFW.glfwSwapBuffers(window);
@@ -109,5 +97,13 @@ public class Main {
         // Don't forget to cleanup
         GLFW.glfwTerminate();
     }
+
+    public static boolean isIn(Square movingSquare, Square square) {
+        return ((square.getX() > movingSquare.getX() && square.getX() < (movingSquare.getX() + movingSquare.getSize()))
+                || ((square.getX() + square.getSize()) > movingSquare.getX() && (square.getX() + square.getSize()) < (movingSquare.getX() + movingSquare.getSize()))
+                || (square.getY() > movingSquare.getY() && square.getY() < (movingSquare.getY() + movingSquare.getSize()))
+                 || ((square.getY() + square.getSize()) > movingSquare.getY() && (square.getY() + square.getSize()) < (movingSquare.getY() + movingSquare.getSize())));
+    }
+
 
 }
