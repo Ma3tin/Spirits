@@ -1,10 +1,10 @@
-cz/educanet/LoadTXT.java
- cz.educanet.LoadTXT
 cz/educanet/Shaders.java
  cz.educanet.Shaders
+cz/educanet/LoadTXT.java
+ cz.educanet.LoadTXT
 cz/educanet/Game.java
  cz.educanet.Game
-cz/educanet/Square.java
- cz.educanet.Square
 cz/educanet/Main.java
  cz.educanet.Main
+cz/educanet/Square.java
+ cz.educanet.Square

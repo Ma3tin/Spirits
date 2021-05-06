@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        String maze = LoadTXT.loadTxt("Collision.txt");
+        String maze = LoadTXT.loadTxt("Collision2.txt");
 
         String[] linesOfMaze = maze.split("\n");
 
@@ -76,13 +76,8 @@ public class Main {
             }
 
 
-
             for (int i = 0; i < squares.size(); i++) {
-
-                if (isIn(movingSquare, squares.get(i))){
-                    movingSquare.red();
-
-                } else movingSquare.white();
+                if (doesCollide(movingSquare, squares.get(i))) break;
             }
             movingSquare.update(window);
 
@@ -97,13 +92,27 @@ public class Main {
         // Don't forget to cleanup
         GLFW.glfwTerminate();
     }
-
-    public static boolean isIn(Square movingSquare, Square square) {
-        return ((square.getX() > movingSquare.getX() && square.getX() < (movingSquare.getX() + movingSquare.getSize()))
-                || ((square.getX() + square.getSize()) > movingSquare.getX() && (square.getX() + square.getSize()) < (movingSquare.getX() + movingSquare.getSize()))
-                || (square.getY() > movingSquare.getY() && square.getY() < (movingSquare.getY() + movingSquare.getSize()))
-                 || ((square.getY() + square.getSize()) > movingSquare.getY() && (square.getY() + square.getSize()) < (movingSquare.getY() + movingSquare.getSize())));
+    public static boolean doesCollide(Square movingSquare, Square square) {
+        if (isIn(movingSquare, square)) {
+            movingSquare.green();
+            return true;
+        }
+        else movingSquare.red();
+        return false;
     }
+    public static boolean isIn(Square movingSquare, Square square) {
+        /*System.out.print("moving square:" + movingSquare.getX() + ";" + movingSquare.getY());
+        System.out.println("square:" + square.getX() + ";" + square.getY());*/
+
+
+        return (((movingSquare.getX() < (square.getX() + square.getSize()) && movingSquare.getX() > square.getX())
+                || (((movingSquare.getX() + movingSquare.getSize()) < (square.getX() + square.getSize()) && (movingSquare.getX() + movingSquare.getSize()) > square.getX())))
+                && ((movingSquare.getY() < (square.getY()) && movingSquare.getY() > square.getY() - square.getSize()) // levy horni bod
+                || (((movingSquare.getY() - movingSquare.getSize()) > (square.getY() - square.getSize()) && (movingSquare.getY() - movingSquare.getSize()) < square.getY()))));
+    }
+
+
+
 
 
 }

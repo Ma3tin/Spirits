@@ -25,10 +25,11 @@ public class Square {
     public Matrix4f matrix;
     public FloatBuffer matrixFloatBuffer;
     public float[] red;
-    public float[] white;
+    public float[] green;
     private float x;
     private float y;
     private float size;
+    public FloatBuffer floatBufferColors;
 
 
     public Square(float x, float y, float size) {
@@ -62,11 +63,11 @@ public class Square {
                 1f, 0f, 0f, 1f,
         };
 
-        white = new float[]{
-                1f, 1f, 1f, 1f,
-                1f, 1f, 1f, 1f,
-                1f, 1f, 1f, 1f,
-                1f, 1f, 1f, 1f,
+        green = new float[]{
+                0f, 1f, 0f, 1f,
+                0f, 1f, 0f, 1f,
+                0f, 1f, 0f, 1f,
+                0f, 1f, 0f, 1f,
         };
 
         float[] vertices = {
@@ -76,6 +77,7 @@ public class Square {
                 x, y, 0.0f, // 3 -> Top left
         };
 
+        floatBufferColors = BufferUtils.createFloatBuffer(red.length).put(red).flip();
         this.vertices = vertices;
 
         squareVaoId = GL33.glGenVertexArrays();
@@ -158,25 +160,21 @@ public class Square {
     }
 
     public void red() {
+        GL33.glBindVertexArray(squareVaoId);
+        floatBufferColors.clear().put(red).flip();
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, squareColorId);
-        FloatBuffer cfb = BufferUtils.createFloatBuffer(red.length).put(red).flip();
-
-        GL33.glBufferData(GL33.GL_ARRAY_BUFFER, cfb, GL33.GL_STATIC_DRAW);
+        GL33.glBufferData(GL33.GL_ARRAY_BUFFER, floatBufferColors, GL33.GL_STATIC_DRAW);
         GL33.glVertexAttribPointer(1, 4, GL33.GL_FLOAT, false, 0, 0);
         GL33.glEnableVertexAttribArray(1);
-
-        MemoryUtil.memFree(cfb);
     }
 
-    public void white() {
+    public void green() {
+        GL33.glBindVertexArray(squareVaoId);
+        floatBufferColors.clear().put(green).flip();
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, squareColorId);
-        FloatBuffer cfb = BufferUtils.createFloatBuffer(white.length).put(white).flip();
-
-        GL33.glBufferData(GL33.GL_ARRAY_BUFFER, cfb, GL33.GL_STATIC_DRAW);
+        GL33.glBufferData(GL33.GL_ARRAY_BUFFER, floatBufferColors, GL33.GL_STATIC_DRAW);
         GL33.glVertexAttribPointer(1, 4, GL33.GL_FLOAT, false, 0, 0);
         GL33.glEnableVertexAttribArray(1);
-
-        MemoryUtil.memFree(cfb);
     }
 
     public float getX() {
@@ -190,4 +188,6 @@ public class Square {
     public float getSize() {
         return size;
     }
+
+
 }
