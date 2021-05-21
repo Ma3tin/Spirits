@@ -4,8 +4,11 @@ import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL33;
+import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -21,6 +24,7 @@ public class Square {
     public int squareVboId;
     private int squareEboId;
     private int squareColorId;
+    private int textureId;
     public static int uniformMatrixLocation;
     public Matrix4f matrix;
     public FloatBuffer matrixFloatBuffer;
@@ -56,6 +60,13 @@ public class Square {
                 1f, 1f, 1f, 1f,
         };
 
+        float[] textureIndices = {
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 0.0f
+        };
+
         red = new float[]{
                 1f, 0f, 0f, 1f,
                 1f, 0f, 0f, 1f,
@@ -84,6 +95,9 @@ public class Square {
         squareEboId = GL33.glGenBuffers();
         squareVboId = GL33.glGenBuffers();
         squareColorId = GL33.glGenBuffers();
+        textureId = GL33.glGenBuffers();
+
+        loadImage();
 
         uniformMatrixLocation = GL33.glGetUniformLocation(Shaders.shaderProgramId, "matrix");
 
@@ -94,7 +108,6 @@ public class Square {
                 .put(indices)
                 .flip();
         GL33.glBufferData(GL33.GL_ELEMENT_ARRAY_BUFFER, ib, GL33.GL_STATIC_DRAW);
-
 
 
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, squareColorId);
@@ -123,9 +136,17 @@ public class Square {
 
         MemoryUtil.memFree(fb);
         MemoryUtil.memFree(ib);
+
+        GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, textureId);
+        FloatBuffer tb = BufferUtils.createFloatBuffer(textureIndices.length).put(textureIndices).flip();
+
+        GL33.glBufferData(GL33.GL_ARRAY_BUFFER, tb, GL33.GL_STATIC_DRAW);
+        GL33.glVertexAttribPointer(2, 2, GL33.GL_FLOAT, false, 0, 0);
+        GL33.glEnableVertexAttribArray(2);
+
     }
 
-    public void render () {
+    public void render() {
         matrix.get(matrixFloatBuffer);
         GL33.glUniformMatrix4fv(uniformMatrixLocation, false, matrixFloatBuffer);
 
@@ -138,21 +159,29 @@ public class Square {
 
 
     public void update(long window) {
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS) {
-            matrix = matrix.translate(0.01f, 0f, 0f);
-            this.x = x + 0.01f;
+        if (this.x <= 0.75) {
+            if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS) {
+                matrix = matrix.translate(0.01f, 0f, 0f);
+                this.x = x + 0.01f;
+            }
         }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS) {
-            matrix = matrix.translate(-0.01f, 0f, 0f);
-            this.x = x - 0.01f;
+        if (this.x >= -1) {
+            if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS) {
+                matrix = matrix.translate(-0.01f, 0f, 0f);
+                this.x = x - 0.01f;
+            }
         }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
-            matrix = matrix.translate(0f, 0.01f, 0f);
-            this.y = y + 0.01f;
+        if (this.y <= 1) {
+            if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
+                matrix = matrix.translate(0f, 0.01f, 0f);
+                this.y = y + 0.01f;
+            }
         }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS) {
-            matrix = matrix.translate(0, -0.01f, 0f);
-            this.y = y - 0.01f;
+        if (this.y >= -0.75) {
+            if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS) {
+                matrix = matrix.translate(0, -0.01f, 0f);
+                this.y = y - 0.01f;
+            }
         }
 
         matrix.get(matrixFloatBuffer);
@@ -175,6 +204,21 @@ public class Square {
         GL33.glBufferData(GL33.GL_ARRAY_BUFFER, floatBufferColors, GL33.GL_STATIC_DRAW);
         GL33.glVertexAttribPointer(1, 4, GL33.GL_FLOAT, false, 0, 0);
         GL33.glEnableVertexAttribArray(1);
+    }
+
+    private void loadImage() {
+        MemoryStack stack = MemoryStack.stackPush();
+        IntBuffer wide = stack.mallocInt(1);
+        IntBuffer height = stack.mallocInt(1);
+        IntBuffer comp = stack.mallocInt(1);
+
+        ByteBuffer img = STBImage.stbi_load("resources/pngegg.png", wide, height, comp, 3);
+        if (img != null) {
+            img.flip();
+            GL33.glBindTexture(GL33.GL_TEXTURE_2D, textureId);
+            GL33.glTexImage2D(GL33.GL_TEXTURE_2D, 0, GL33.GL_RGB, wide.get(), height.get(), 0, GL33.GL_RGB, GL33.GL_UNSIGNED_BYTE, img);
+            GL33.glGenerateMipmap(GL33.GL_TEXTURE_2D);
+        }
     }
 
     public float getX() {

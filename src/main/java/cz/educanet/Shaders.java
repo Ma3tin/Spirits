@@ -6,24 +6,30 @@ public class Shaders {
     private static final String vertexShaderSource = "#version 330 core\n" +
             "layout (location = 0) in vec3 aPos;\n" +
             "layout (location = 1) in vec4 vertexColors;\n" +
+            "layout (location = 2) in vec2 aTexture;\n" +
 
             "uniform mat4 matrix;" +
 
             "out vec4 myColors;\n" +
+            "out vec2 outTexture;\n" +
 
             "void main()\n" +
             "{\n" +
             "gl_Position = matrix *  vec4(aPos.x, aPos.y, aPos.z, 1.0);\n" +
             "myColors = vertexColors;\n" +
+            "outTexture = aTexture;\n" +
             "}";
 
 
     private static final String fragmentShaderSource = "#version 330 core\n" +
             "out vec4 FragColor;\n" +
             "in vec4 myColors;\n" +
+            "in vec2 outTexture;\n" +
+            "uniform sampler2D ourTexture;\n" +
             "void main()\n" +
             "{\n" +
-            "   FragColor = myColors;\n" +
+            //"   FragColor = myColors;\n" +
+            "   FragColor = texture(ourTexture, outTexture);\n" +
             "}\n";
 
     public static int vertexShaderId;

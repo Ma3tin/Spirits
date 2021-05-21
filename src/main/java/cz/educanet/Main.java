@@ -9,9 +9,11 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws Exception {
+        /*
         String maze = LoadTXT.loadTxt("Collision2.txt");
 
         String[] linesOfMaze = maze.split("\n");
+        */
 
 
         //region: Window init
@@ -49,11 +51,13 @@ public class Main {
         //GL33.glPolygonMode(GL33.GL_FRONT_AND_BACK, GL33.GL_LINE);
         ArrayList<Square> squares = new ArrayList<>();
 
+        /*
         for (int i = 0; i < linesOfMaze.length; i++) {
             String[] coords = linesOfMaze[i].split(";");
             Square square = new Square(Float.parseFloat(coords[0]), Float.parseFloat(coords[1]), Float.parseFloat(coords[2]));
             squares.add(square);
         }
+         */
 
         Square movingSquare = new Square(0f, 0f, 0.25f);
 
@@ -76,9 +80,7 @@ public class Main {
             }
 
 
-            for (int i = 0; i < squares.size(); i++) {
-                if (doesCollide(movingSquare, squares.get(i))) break;
-            }
+
             movingSquare.update(window);
 
             movingSquare.render();
