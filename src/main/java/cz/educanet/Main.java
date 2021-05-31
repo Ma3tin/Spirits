@@ -47,19 +47,8 @@ public class Main {
         //Game.init(window);
         Shaders.initShaders();
 
-        // Draw in polygon mod
-        //GL33.glPolygonMode(GL33.GL_FRONT_AND_BACK, GL33.GL_LINE);
-        ArrayList<Square> squares = new ArrayList<>();
-
-        /*
-        for (int i = 0; i < linesOfMaze.length; i++) {
-            String[] coords = linesOfMaze[i].split(";");
-            Square square = new Square(Float.parseFloat(coords[0]), Float.parseFloat(coords[1]), Float.parseFloat(coords[2]));
-            squares.add(square);
-        }
-         */
-
         Square movingSquare = new Square(0f, 0f, 0.25f);
+
 
 
         while (!GLFW.glfwWindowShouldClose(window)) {
@@ -70,16 +59,6 @@ public class Main {
             // Change the background color
             GL33.glClearColor(0f, 0f, 0f, 1f);
             GL33.glClear(GL33.GL_COLOR_BUFFER_BIT);
-
-            /*Game.render(window);
-            Game.update(window);*/
-            //squareOne.render();
-
-            for (int i = 0; i < squares.size(); i++) {
-                squares.get(i).render();
-            }
-
-
 
             movingSquare.update(window);
 
@@ -93,14 +72,6 @@ public class Main {
 
         // Don't forget to cleanup
         GLFW.glfwTerminate();
-    }
-    public static boolean doesCollide(Square movingSquare, Square square) {
-        if (isIn(movingSquare, square)) {
-            movingSquare.green();
-            return true;
-        }
-        else movingSquare.red();
-        return false;
     }
     public static boolean isIn(Square movingSquare, Square square) {
         /*System.out.print("moving square:" + movingSquare.getX() + ";" + movingSquare.getY());
