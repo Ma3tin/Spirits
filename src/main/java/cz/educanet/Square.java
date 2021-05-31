@@ -33,7 +33,7 @@ public class Square {
     private float x;
     private float y;
     private float size;
-    public int frame = 0;
+    public float frame = 0;
     public FloatBuffer tb = BufferUtils.createFloatBuffer(8);
 
 
@@ -61,26 +61,13 @@ public class Square {
                 1f, 1f, 1f, 1f,
         };
 
-        float[] textureIndices = {
+        textureIndices = new float[]{
                 1.0f, 0.0f,
                 1.0f, 1.0f,
                 0.0f, 1.0f,
                 0.0f, 0.0f
         };
 
-        red = new float[]{
-                1f, 0f, 0f, 1f,
-                1f, 0f, 0f, 1f,
-                1f, 0f, 0f, 1f,
-                1f, 0f, 0f, 1f,
-        };
-
-        green = new float[]{
-                0f, 1f, 0f, 1f,
-                0f, 1f, 0f, 1f,
-                0f, 1f, 0f, 1f,
-                0f, 1f, 0f, 1f,
-        };
 
         float[] vertices = {
                 x + size, y, 0.0f, // 0 -> Top right
@@ -89,7 +76,6 @@ public class Square {
                 x, y, 0.0f, // 3 -> Top left
         };
 
-        floatBufferColors = BufferUtils.createFloatBuffer(red.length).put(red).flip();
         this.vertices = vertices;
 
         squareVaoId = GL33.glGenVertexArrays();
@@ -160,47 +146,57 @@ public class Square {
 
 
     public void update(long window) {
-        int move = frame % 6;
-        switch (move) {
-            case 0: textureIndices = new float[]{
-                    0.15f, 0.0f,
-                    0.15f, 0.15f,
-                    0.0f, 0.15f,
-                    0.0f, 0.0f
-            };
-            case 1: textureIndices = new float[]{
-                    0.3f, 0.15f,
-                    0.3f, 0.3f,
-                    0.15f, 0.3f,
-                    0.15f, 0.15f
-            };
-            case 2: textureIndices = new float[]{
-                    0.45f, 0.3f,
-                    0.45f, 0.45f,
-                    0.3f, 0.45f,
-                    0.3f, 0.3f
-            };
-            case 3: textureIndices = new float[]{
-                    0.6f, 0.45f,
-                    0.6f, 0.6f,
-                    0.45f, 0.6f,
-                    0.45f, 0.6f
-            };
-            case 4: textureIndices = new float[]{
-                    0.75f, 0.6f,
-                    0.75f, 0.75f,
-                    0.6f, 0.75f,
-                    0.6f, 0.6f
-            };
-            case 5: textureIndices = new float[]{
-                    0.9f, 0.75f,
-                    0.9f, 0.9f,
-                    0.75f, 0.9f,
-                    0.75f, 0.75f
+        int move = (int) frame % 6;
+            if (move == 0) {
+                textureIndices = new float[]{
+                        0.16f, 0.0f,
+                        0.16f, 1f,
+                        0.0f, 1f,
+                        0.0f, 0.0f,
+                };
+            }
+        if (move == 1) {
+            textureIndices = new float[]{
+                    0.32f, 0.0f,
+                    0.32f, 1f,
+                    0.16f, 1f,
+                    0.16f, 0.0f,
             };
         }
-        move++;
-        tb.put(textureIndices).flip();
+        if (move == 2) {
+            textureIndices = new float[]{
+                    0.48f, 0.0f,
+                    0.48f, 1f,
+                    0.32f, 1f,
+                    0.32f, 0.0f,
+            };
+        }
+        if (move == 3) {
+            textureIndices = new float[]{
+                    0.64f, 0.0f,
+                    0.64f, 1f,
+                    0.48f, 1f,
+                    0.48f, 0.0f,
+            };
+        }
+        if (move == 4) {
+            textureIndices = new float[]{
+                    0.80f, 0.0f,
+                    0.80f, 1f,
+                    0.64f, 1f,
+                    0.64f, 0.0f,
+            };
+        }
+        if (move == 5) {
+            textureIndices = new float[]{
+                    0.96f, 0.0f,
+                    0.96f, 1f,
+                    0.8f, 1f,
+                    0.8f, 0f,
+            };
+        }
+        frame += 0.1;
+        tb.clear().put(textureIndices).flip();
 
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, textureId);
         GL33.glBufferData(GL33.GL_ARRAY_BUFFER, tb, GL33.GL_STATIC_DRAW);

@@ -50,7 +50,6 @@ public class Main {
         Square movingSquare = new Square(0f, 0f, 0.25f);
 
 
-
         while (!GLFW.glfwWindowShouldClose(window)) {
             // Key input management
             if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_ESCAPE) == GLFW.GLFW_PRESS)
@@ -73,19 +72,4 @@ public class Main {
         // Don't forget to cleanup
         GLFW.glfwTerminate();
     }
-    public static boolean isIn(Square movingSquare, Square square) {
-        /*System.out.print("moving square:" + movingSquare.getX() + ";" + movingSquare.getY());
-        System.out.println("square:" + square.getX() + ";" + square.getY());*/
-
-
-        return (((movingSquare.getX() < (square.getX() + square.getSize()) && movingSquare.getX() > square.getX())
-                || (((movingSquare.getX() + movingSquare.getSize()) < (square.getX() + square.getSize()) && (movingSquare.getX() + movingSquare.getSize()) > square.getX())))
-                && ((movingSquare.getY() < (square.getY()) && movingSquare.getY() > square.getY() - square.getSize()) // levy horni bod
-                || (((movingSquare.getY() - movingSquare.getSize()) > (square.getY() - square.getSize()) && (movingSquare.getY() - movingSquare.getSize()) < square.getY()))));
-    }
-
-
-
-
-
 }
